@@ -5,6 +5,7 @@ import DatePicker from "react-date-picker";
 class Main extends Component {
     state = {
         date: new Date(),
+        shortDate: '',
         photo: {}
     };
 
@@ -27,11 +28,22 @@ class Main extends Component {
             .then(response => response.json())
             .then(photoData => this.setState({ photo: photoData }));
 
-
     };
 
+    componentWillMount() {
+        localStorage.getItem('date') && this.setState({
+            date:  new Date(localStorage.getItem('date')),
+        })
+    }
+
     componentDidMount() {
-        this.FetchPhotoFromApi(this.getNewDate(this.state.date))
+        if(!localStorage.getItem('date')){
+            this.FetchPhotoFromApi(this.getNewDate(this.state.date))
+            console.log('new')
+        } else {
+            this.FetchPhotoFromApi(this.getNewDate(new Date(localStorage.getItem('date')))) // get
+            console.log('localStorage')
+        }
     }
 
     render() {
@@ -46,6 +58,11 @@ class Main extends Component {
                         this.setState({
                             date: value
                         })
+                        if (this.getNewDate(value) === this.getNewDate(new Date())) {
+                            localStorage.clear()
+                        } else {
+                            localStorage.setItem('date', value)
+                        }
                     }}
                     value={this.state.date}
                     format={"y-MM-dd"}
@@ -54,7 +71,6 @@ class Main extends Component {
 
                 <div>
                     <h3>{this.state.photo.title}</h3>
-                    {/*<img src={this.state.photo.url} alt={this.state.photo.title} />*/}
                     {this.state.photo.media_type === "image" ? (
                         <img
                             src={this.state.photo.url}
