@@ -5,7 +5,6 @@ import DatePicker from "react-date-picker";
 class Main extends Component {
     state = {
         date: new Date(),
-        shortDate: '',
         photo: {}
     };
 
